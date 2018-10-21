@@ -1,0 +1,82 @@
+Grammar for RUST
+=================
+
+e = empty string
+
+Basic
+------
+
+<Program> -> <Function><Main>
+<Main> -> fn main()<Statements>
+<Statements> -> <Statement>;<Statements>
+                | <Statement>
+<Statement> ->  <DeclarationStatement>
+              | <ExpressionStatement>
+<DeclarationStatement> -> let <variable>;
+                        | let <variable> : <DataType>;
+                        | let <variable> = <LiteralExpression>;
+                        | let <variable> : <DataType> = <LiteralExpression> ;
+<ExpressionStatement> ->   <LiteralExpression>
+                         | <BlockExpression>
+                         | OperatorExpression>
+                         | <GroupedExpression>
+                         | <MethodCallExpression>
+                         | <LoopExpression>
+                         | continue;
+                         | break;
+                         | <IfExpression>
+                         | <ReturnExpression>
+
+<LiteralExpression> ->       CHAR_STR_LITERAL
+                            | INTEGER_LITERAL
+                            | FLOAT_LITERAL
+                            | BOOLEAN_LITERAL
+<DataType> -> i16
+            | u16
+            | f32
+            | bool
+            | char
+
+<Identifier> -> any_char <Identifier> | e
+<variable> -> <Identfier>
+<BlockExpression> -> { <ExpressionStatement> }
+<ReturnExpression> -> return <ExpressionStatement>;
+<GroupedExpression> -> ( <ExpressionStatement> )
+
+Literals and Variables
+---------------------
+
+<CHAR_STR_LITERAL> -> any_char <CHAR_STR_LITERAL> | e
+<INTEGER_LITERAL>		[0-9] <INTEGER_LITERAL> | e
+<FLOAT_LITERAL>		<INTEGER_LITERAL> . <INTEGER_LITERAL>
+
+Loop Statement
+--------------
+
+<LoopExpression> -> while <ExpressionStatement> <BlockExpression>
+
+Conditional Statement
+----------------------
+
+<IfExpression> -> if <ExpressionStatement>  <BlockExpression>
+                | if <ExpressionStatement>  <BlockExpression> else <IfExpression>
+                | if <ExpressionStatement>  <BlockExpression> else <IfExpression> else <BlockExpression>
+
+Function Statement
+-------------------
+
+<FunctionBlock> -> fn <FunctionIdentifier> (<ParameterList>) <BlockExpression>
+                |  fn <FunctionIdentifier> (<ParameterList>) -> <DataType> <BlockExpression>
+
+<ParameterList> -> <variable>,<ParameterList>
+                  | <variable>: <DataType>,<ParameterList>
+                  | e
+
+<MethodCallExpression> -> <FunctionIdentifier> (<ParameterList>);
+
+
+<FunctionIdentifier> -> <Identfier>
+
+
+Operator Assignments
+---------------------
