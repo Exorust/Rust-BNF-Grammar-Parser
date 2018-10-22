@@ -7,8 +7,6 @@ import java.io.*;
 // syntax: type <TYPE_NAME> = <DATATYPE>;
 // TODO: Implement a Type checker.
 
-// Send arrays to function... needs pointers, not handling them rn... ask ta.
-
 class Popl {
 
     private static ArrayList<String> datatypes;
@@ -173,8 +171,6 @@ class Popl {
             else if (token.equals("fn")) {
                 // functionToType
                 // System.out.println("tokens: "+tokens.get(i));
-                
-
                 i++;
                 ArrayList<ArrayList<String>> argsList = new ArrayList<>();
                 String functionName = tokens.get(i);
@@ -187,7 +183,43 @@ class Popl {
                     ArrayList<String> argument = new ArrayList<>();
                     argument.add(tokens.get(i));
                     i++;
-                    if (tokens.get(i).contains(")")) {
+                    if(tokens.get(i).contains("[")){
+                        if(tokens.get(i).length() > 1){
+                            String arrayType = tokens.get(i);
+                            arrayType = arrayType.replace("[","");
+                            argument.add(arrayType);
+                            i++;
+                        }
+                        else{
+                            i++;
+                            String arrayType = tokens.get(i);
+                            arrayType = arrayType.replace("[","");
+                            argument.add(arrayType);
+                            i++;
+                        }
+                        if (tokens.get(i).contains(")")) {
+                            int length = tokens.get(i).length();
+                            if (length > 1) {
+                                String temp = tokens.get(i);
+                                temp = temp.replace(")", "");
+                                temp = temp.replace("]","");
+                                System.out.println(temp);
+                                tokens.set(i, temp);
+                                argument.add(temp);
+                                argsList.add(argument);
+                                break;
+                            } else {
+                                i++;
+                                break;
+                            }
+                        } else {
+                            String temp = tokens.get(i);
+                            temp = temp.replace("]","");
+                            System.out.println(temp);
+                            argument.add(temp);
+                        }
+                    }
+                    else if (tokens.get(i).contains(")")) {
                         int length = tokens.get(i).length();
                         if (length > 1) {
                             String temp = tokens.get(i);
@@ -358,8 +390,25 @@ class Popl {
                                                     ) {
 
         
+
+        // Array structural equivalence
+        ArrayList<String> arrays = new ArrayList<>(arrayToType.keySet());
+        for(int i = 1; i < arrays.size(); i++){
+            for(int j = 0; j < i; j++ ){
+                String key1 = arrays.get(i);
+                String key2 = arrays.get(j);
+                ArrayList<String> arrayData1 = arrayToType.get(key1);
+                ArrayList<String> arrayData2 = arrayToType.get(key2);
+                if(arrayData1.get(1).equals(arrayData2.get(1)) && arrayData1.get(2).equals(arrayData2.get(2))){
+                    System.out.println(key1+" and "+key2+" STRUCTURALLY EQUIVALENT");
+                }
+                else{
+                    System.out.println(key1+" and "+key2+" NOT STRUCTURALLY EQUIVALENT");
+                }
+            }
+        }
+
         // To check structural equivalence of structures, create a nC2 boolean lookup matrix and use that for checking.
-        
         ArrayList<String> keys = new ArrayList<>(structToType.keySet());
         boolean structEquivalence[][] = new boolean[keys.size()][];
         for(int i = 1; i < keys.size(); i++){
@@ -367,6 +416,7 @@ class Popl {
             for(int j = 0; j < i; j++)
                 structEquivalence[i][j] = true;
         }
+
         boolean doneFlag = false;
         for(int count = 0;!doneFlag && count < ((keys.size()-1)*keys.size())/2; count++){
             doneFlag = true;
@@ -440,7 +490,10 @@ class Popl {
 
         for(int i = 1; i < keys.size(); i++){
             for(int j = 0; j < i; j++){
-                System.out.println(" "+keys.get(i)+" "+keys.get(j)+" "+structEquivalence[i][j]);
+                if(structEquivalence[i][j])
+                    System.out.println(" "+keys.get(i)+" "+keys.get(j)+" STRUCTURALLY EQUIVALENT");
+                else 
+                    System.out.println(" "+keys.get(i)+" "+keys.get(j)+" NOT STRUCTURALLY EQUIVALENT");
             }
         }
     }
@@ -489,7 +542,7 @@ class Popl {
                 else{
                     // derived types are equal, but they are arrays
                     if(body1.get(inBody).size() != body2.get(inBody).size()){   // primitive/derived with array
-                        structEquivalence[pos2][pos2] = false;
+                        structEquivalence[pos1][pos2] = false;
                         done = false;
                     } 
                     else{ // both are arrays or primitives
@@ -541,9 +594,9 @@ class Popl {
 // stop
 
 // FUNCTION TYPES
-// fn five() -> i32
-// fn six(arg1: i32, arg2: bool){}
-// fn seven(arg1: i32, arg2: f32) -> bool{}
+// let x: [i32,5]
+// let y: [i32,10]
+// let z: [ i32,10];
 // stop
 
 // ALIASING
