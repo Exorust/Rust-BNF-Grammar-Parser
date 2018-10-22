@@ -7,10 +7,14 @@ e = empty string
 Basic
 ------
 
-<Program> -> <FunctionBlock><Main>
+<Program> -> <FunctionDeclarations><FunctionDefinitions><Main>
+<FunctionDeclarations> -> <FunctionDeclaration> <FunctionDeclarations>
+                        | e
+<FunctionDefinitions> -> <FunctionDefinition> <FunctionDefinitions>
+                        | e
 <Main> -> fn main() {<Statements>}
 <Statements> -> <Statement>;<Statements>
-                | <Statement>
+              | e
 <Statement> ->  <DeclarationStatement>
               | <ExpressionStatement>
               | <AssignmentExpression>
@@ -26,19 +30,18 @@ Basic
 
 <VariableDefinition> -> <Variable>
                       | mut <Variable>
-<ExpressionStatement> ->   <LiteralExpression>
-                         | <BlockExpression>
-                         | <LogicalOrExpression>
-                         | <GroupedExpression>
-                         | <MethodCallExpression>
-                         | <LoopExpression>
-                         | <ContinueExpression>
-                         | <BreakExpression>
-                         | <IfExpression>
-                         | <ReturnExpression
+<ExpressionStatement> -> <LiteralExpression>
+                       | <BlockExpression>
+                       | <LogicalOrExpression>
+                       | <GroupedExpression>
+                       | <FunctionCall>
+                       | <LoopExpression>
+                       | <ContinueExpression>
+                       | <BreakExpression>
+                       | <IfExpression>
+                       | <ReturnExpression
 
 <TypeExpression> -> type <Identfier> = <Identfier>
-
 <BlockExpression> -> { <Statements> }
 <ReturnExpression> -> return <ExpressionStatement>
 <GroupedExpression> -> ( <ExpressionStatement> )
@@ -85,16 +88,17 @@ Conditional Statement
 
 Function Statement
 -------------------
+<FunctionDeclaration> -> fn <FunctionIdentifier> (<ParameterList>);
 
-<FunctionBlock> -> fn <FunctionIdentifier> (<ParameterList>) <BlockExpression>
+<FunctionDefinition> -> fn <FunctionIdentifier> (<ParameterList>) <BlockExpression>
                 |  fn <FunctionIdentifier> (<ParameterList>) -> <DataType> <BlockExpression>
 
 <ParameterList> -> <Variable>,<ParameterList>
                   | <Variable>: <DataType>,<ParameterList>
-                  | e
+                  | <Variable>
+                  | <Variable>: <DataType>
 
-<MethodCallExpression> -> <FunctionIdentifier> (<ParameterList>)
-
+<FunctionCall> -> <FunctionIdentifier> (<ParameterList>)
 
 <FunctionIdentifier> -> <Identfier>
 
