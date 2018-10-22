@@ -91,16 +91,25 @@ class Popl {
                         params.add(type);
                         variableToType.put(ident, params);
                     } else {
-                        if (type.contains("[")) { // [ needed by array's declaration
-                            i++;
-                            // System.out.println(type);
-                            type = type.replace("[", "");
-                            // System.out.println(type);
+                        if (type.contains("[")) { // [ needed by array's declaration, no spaces
+                            System.out.println(type);
+                            if(type.length() > 1){
+                                System.out.println("TYPE: "+type);
+                                type = type.replace("[", "");
+                                i++;
+                            }
+                            else{
+                                i++;
+                                type = tokens.get(i);
+                                System.out.println("type"+type);
+                                i++;
+                            }
+                            System.out.println(type);
                             String sizeOfArray = tokens.get(i);
-                            // System.out.println(sizeOfArray);
+                            System.out.println(sizeOfArray);
                             sizeOfArray = sizeOfArray.replace("]", "");
-                            // System.out.println(sizeOfArray);
-                            // System.out.println(ident);
+                            System.out.println(sizeOfArray);
+                            System.out.println(ident);
                             ArrayList<String> datatypeLength = new ArrayList<>();
                             datatypeLength.add(Integer.toString(internalNameGenerators));
                             datatypeLength.add(type);
