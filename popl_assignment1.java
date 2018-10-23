@@ -376,10 +376,6 @@ class Popl {
             System.out.println(idents.get(i) + " Does NOT follow INTERNAL NAME EQUIVALENCE");
         }
     }
-
-    // derived dts other dt done
-    // functions
-    // structures
     private static void checkStructuralEquivalence( HashMap<String, ArrayList<String>> variableToType,
                                                     HashMap<String, ArrayList<String>> derivedInstances,
                                                     HashMap<String, ArrayList<String>> structureInstances,
@@ -409,23 +405,26 @@ class Popl {
         }
 
         // To check structural equivalence of structures, create a nC2 boolean lookup matrix and use that for checking.
+    
         ArrayList<String> keys = new ArrayList<>(structToType.keySet());
+        System.out.println("KEYS\n\n\n"+(keys.size() == 0));
         boolean structEquivalence[][] = new boolean[keys.size()][];
-        for(int i = 1; i < keys.size(); i++){
-            structEquivalence[i] = new boolean[i];
-            for(int j = 0; j < i; j++)
-                structEquivalence[i][j] = true;
-        }
-
         boolean doneFlag = false;
-        for(int count = 0;!doneFlag && count < ((keys.size()-1)*keys.size())/2; count++){
-            doneFlag = true;
-            for(int i = 1; i < keys.size(); i++)
-                for(int j = 0; j < i; j++){
-                    checkInternalsForEquivalence(i,j,keys.get(i), keys.get(j),structEquivalence, keys.size(),structToType.get(keys.get(i)),structToType.get(keys.get(j)),derivedType,keys);
-                }
+        if(keys.size() > 0){
+            for(int i = 1; i < keys.size(); i++){
+                    structEquivalence[i] = new boolean[i];
+                    for(int j = 0; j < i; j++)
+                        structEquivalence[i][j] = true;
+            }
+        
+            for(int count = 0;!doneFlag && count < ((keys.size()-1)*keys.size())/2; count++){
+                doneFlag = true;
+                for(int i = 1; i < keys.size(); i++)
+                    for(int j = 0; j < i; j++){
+                        checkInternalsForEquivalence(i,j,keys.get(i), keys.get(j),structEquivalence, keys.size(),structToType.get(keys.get(i)),structToType.get(keys.get(j)),derivedType,keys);
+                    }
+            }
         }
-
         // for(int i = 1; i < keys.size(); i++){
         //     for(int j = 0; j < i; j++){
         //         System.out.print(" "+keys.get(i)+" "+keys.get(j)+" "+structEquivalence[i][j]);
@@ -439,8 +438,8 @@ class Popl {
         mergedMap.putAll(derivedInstances);                 
         mergedMap.putAll(structureInstances);                                      
         ArrayList<String> idents = new ArrayList<>(mergedMap.keySet());
-        // System.out.println("idents: "+idents);
-        // System.out.println("keys: "+keys);
+        System.out.println("idents: "+idents);
+        System.out.println("keys: "+keys);
         for (int i = 0; i < idents.size(); i++) {
             String key1 = idents.get(i);
             for (int j = 0; j < i; j++) {
@@ -454,7 +453,7 @@ class Popl {
                 if(parentType1.equals(parentType2)){ 
                     System.out.println(key1+" and "+key2+" STRUCTURALLY EQUIVALENT");
                 }
-                else{
+                else if(parentType1.equals(parentType2) && keys.size() > 0){
                     // System.out.println("idx1: "+keys.indexOf(type1)+" idx2: "+keys.indexOf(type2));
                     int idx1 = keys.indexOf(type1);
                     int idx2 = keys.indexOf(type2);
@@ -465,7 +464,10 @@ class Popl {
                     else if(idx2 >= idx1 && structEquivalence[idx2][idx1]){
                         System.out.println(key1+" and "+key2+" STRUCTURALLY EQUIVALENT");
                     }
-                else
+                    else
+                        System.out.println(key1+" and "+key2+" NOT STRUCTURALLY EQUIVALENT");
+                }
+                else{
                     System.out.println(key1+" and "+key2+" NOT STRUCTURALLY EQUIVALENT");
                 }
             }
@@ -473,27 +475,29 @@ class Popl {
 
         // Similar things applies to functions.
         keys = new ArrayList<>(functionToType.keySet());
-        structEquivalence = new boolean[keys.size()][];
-        for(int i = 1; i < keys.size(); i++){
-            structEquivalence[i] = new boolean[i];
-            for(int j = 0; j < i; j++)
-                structEquivalence[i][j] = true;
-        }
-        doneFlag = false;
-        for(int count = 0;!doneFlag && count < ((keys.size()-1)*keys.size())/2; count++){
-            doneFlag = true;
-            for(int i = 1; i < keys.size(); i++)
-                for(int j = 0; j < i; j++){
-                    checkInternalsForEquivalence(i,j,keys.get(i), keys.get(j),structEquivalence, keys.size(),functionToType.get(keys.get(i)),functionToType.get(keys.get(j)),derivedType,keys);
-                }
-        }
+        if(keys.size() > 0){
+            structEquivalence = new boolean[keys.size()][];
+            for(int i = 1; i < keys.size(); i++){
+                structEquivalence[i] = new boolean[i];
+                for(int j = 0; j < i; j++)
+                    structEquivalence[i][j] = true;
+            }
+            doneFlag = false;
+            for(int count = 0;!doneFlag && count < ((keys.size()-1)*keys.size())/2; count++){
+                doneFlag = true;
+                for(int i = 1; i < keys.size(); i++)
+                    for(int j = 0; j < i; j++){
+                        checkInternalsForEquivalence(i,j,keys.get(i), keys.get(j),structEquivalence, keys.size(),functionToType.get(keys.get(i)),functionToType.get(keys.get(j)),derivedType,keys);
+                    }
+            }
 
-        for(int i = 1; i < keys.size(); i++){
-            for(int j = 0; j < i; j++){
-                if(structEquivalence[i][j])
-                    System.out.println(" "+keys.get(i)+" "+keys.get(j)+" STRUCTURALLY EQUIVALENT");
-                else 
-                    System.out.println(" "+keys.get(i)+" "+keys.get(j)+" NOT STRUCTURALLY EQUIVALENT");
+            for(int i = 1; i < keys.size(); i++){
+                for(int j = 0; j < i; j++){
+                    if(structEquivalence[i][j])
+                        System.out.println(" "+keys.get(i)+" "+keys.get(j)+" STRUCTURALLY EQUIVALENT");
+                    else 
+                        System.out.println(" "+keys.get(i)+" "+keys.get(j)+" NOT STRUCTURALLY EQUIVALENT");
+                }
             }
         }
     }
@@ -573,7 +577,6 @@ class Popl {
 // let e: bool;
 // let f: i16;
 // let g: bool;
-// let mut h: User;
 // stop
 
 // ARRAY TYPES
@@ -620,6 +623,13 @@ class Popl {
 
 // TESTING ALL AT ONCE
 
+// struct User {
+//     username: String,
+//     email: String,
+//     sign_in_count: u32,
+//     active: bool,
+//     lite: [i16,5],
+// }
 // let a: bool;
 // let b: i16;
 // let g: bool,i: i16;
@@ -639,68 +649,6 @@ class Popl {
 
 
 // Structural equivalence with multiple structures
-
-// struct User {
-//     username: String,
-//     email: String,
-//     sign_in_count: u32,
-//     active: bool,
-//     lite: [i16,5],
-// }
-// struct User1 {
-//     username: String,
-//     email: String,
-//     sign_in_count: u32,
-//     active: bool,
-//     lite: [i16,5],
-// }
-// struct User2 {
-//     username: String,
-//     email: String,
-//     sign_in_count: u32,
-//     active: bool,
-//     lite: [i16,5],
-// }
-// struct User3 {
-//     username: String,
-//     email: String,
-//     sign_in_count: u32,
-//     active: bool,
-//     lite: [i16,5],
-// }
-// struct User4 {
-//     username: String,
-//     email: String,
-//     sign_in_count: u32,
-//     active: bool,
-// }
-// stop
-
-// struct User {
-//     username: String,
-//     email: String,
-//     sign_in_count: u32,
-//     active: bool,
-//     lite: [i16,5],
-// }
-// struct User1 {
-//     username: String,
-//     email: String,
-//     sign_in_count: u32,
-//     active: bool,
-//     lite: [i16,5],
-// }
-// struct User2 {
-//     username: String,
-//     email: String,
-//     sign_in_count: u32,
-//     active: bool,
-//     lite: [i16,5],
-// }
-// struct User3 {
-//     username: String,
-//     email: String,
-
 
 // struct User {
 //     username: String,
