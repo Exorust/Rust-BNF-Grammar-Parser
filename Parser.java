@@ -1,7 +1,7 @@
 import java.util.*;
 import java.io.*;
 
-// Handles: Primitive, Functions, Structs, Arrays, Aliases
+// Handles: Primitives, Functions, Structs, Arrays, Aliases
 // NAME, INTERNAL NAME, STRUCTURAL
 // syntax: type <TYPE_NAME> = <DATATYPE>;
 
@@ -176,7 +176,6 @@ class EquivalenceChecker{
             }
         }
     }
-
     private static boolean checkInternalsForEquivalence(int pos1,
                                                         int pos2,
                                                         String key1, 
@@ -242,11 +241,11 @@ class EquivalenceChecker{
 public class Parser{
     private static ArrayList<String> datatypes;
     private static HashMap<String, ArrayList<String>> variableToType, structureInstances, derivedInstances;
-    private static HashMap<String, ArrayList<ArrayList<String>>> functionToType, structToType; // basically hashmap
-                                                                                               // pointing to 2d array
+    private static HashMap<String, ArrayList<ArrayList<String>>> functionToType, structToType; // basically hashmap pointing to 2d array
+                                                                                               
     private static HashMap<String, ArrayList<String>> arrayToType;
-    private static int internalNameGenerators = 0; // use if needed, coz internal name equivalence does not exist in
-                                                   // this
+    private static int internalNameGenerators = 0; // use if needed,  internal name equivalence does not exist in rust
+                                                   
     private static HashMap<String, String> derivedType;
 
     public static void main(String args[]) {
